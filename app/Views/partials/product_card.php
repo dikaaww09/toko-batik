@@ -1,0 +1,4 @@
+<article class="product-card h-100">
+<a class="product-visual" href="<?= site_url('katalog/' . $product['slug']) ?>" tabindex="-1" aria-hidden="true"><img src="<?= esc(product_image($product['gambar']), 'attr') ?>" alt="<?= esc($product['nama_produk'], 'attr') ?>" width="600" height="680" loading="lazy"><span class="availability"><?= $product['status_ketersediaan'] === 'tersedia' ? 'Tersedia' : 'Tidak tersedia' ?></span></a>
+<div class="product-info"><p class="product-category"><?= esc($product['kategori']) ?></p><h3><a href="<?= site_url('katalog/' . $product['slug']) ?>"><?= esc($product['nama_produk']) ?></a></h3><p class="product-price"><?= rupiah($product['harga']) ?></p><a class="detail-link" href="<?= site_url('katalog/' . $product['slug']) ?>" aria-label="Lihat detail <?= esc($product['nama_produk'], 'attr') ?>">Lihat Detail <span aria-hidden="true">↗</span></a></div>
+</article>

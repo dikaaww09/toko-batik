@@ -1,0 +1,3 @@
+<?php if ($message = session()->getFlashdata('success')): ?><div class="alert alert-success" role="status"><?= esc($message) ?></div><?php endif ?>
+<?php if ($message = session()->getFlashdata('error')): ?><div class="alert alert-danger" role="alert"><?= esc($message) ?></div><?php endif ?>
+<?php if ($errors = session()->getFlashdata('errors')): ?><div class="alert alert-danger" role="alert"><p class="mb-2 fw-semibold">Periksa kembali isian Anda.</p><ul class="mb-0"><?php foreach ($errors as $field => $error): ?><li><a href="#<?= esc($field, 'attr') ?>"><?= esc($error) ?></a></li><?php endforeach ?></ul></div><?php endif ?>
