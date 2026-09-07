@@ -34,10 +34,20 @@ def token(page):
 def post(path,data,formpath='/admin/produk/tambah',file=None):
  _,html,_,_=request(formpath)
  return request(path,{'csrf_test_name':token(html),**data},file)
+# Use the form's canonical local origin so redirects retain the same session.
+_,login_page,_,_=request('/admin/login')
+login_action=html_module.unescape(re.search(r'<form[^>]+action="([^"]+)"',login_page)[1])
+canonical=urllib.parse.urlparse(urllib.parse.urljoin(BASE+'/',login_action))
+assert canonical.scheme in ('http','https') and canonical.hostname in ('localhost','127.0.0.1'), 'Hanya server lokal.'
+BASE=urllib.parse.urlunparse(canonical._replace(path=canonical.path.removesuffix('/admin/login'),params='',query='',fragment='')).rstrip('/')
+jar.clear()
 for path in ['/','/katalog','/tentang','/kontak','/admin/login']:
  status,html,_,_=request(path);check('GET '+path,status==200)
- for asset in set(re.findall(r'(?:src|href)="(http://localhost:8080/assets/[^\"]+)"',html)):
-  check('asset '+asset.split('/assets/')[1],request(asset.replace(BASE,''))[0]==200)
+ assets={urllib.parse.urljoin(BASE+'/',html_module.unescape(asset)) for asset in re.findall(r'(?:src|href)="([^"]+)"',html)}
+ assets={asset for asset in assets if asset.startswith(BASE+'/assets/')}
+ check('aset ditemukan '+path,bool(assets))
+ for asset in assets:
+  check('asset '+asset.split('/assets/')[1],request(asset.removeprefix(BASE))[0]==200)
 for path in ['/admin','/admin/produk','/admin/produk/tambah','/admin/produk/edit/1']:
  check('admin terlindungi '+path,request(path)[2].endswith('/admin/login'))
 check('CSRF wajib',request('/admin/login',{'username':USER,'password':PASSWORD})[0]==403)
@@ -58,7 +68,15 @@ check('SQL injection sebagai teks','Produk tidak ditemukan' in request('/katalog
 check('XSS pencarian ter-escape','<script>alert(1)</script>' not in request('/katalog?q='+urllib.parse.quote('<script>alert(1)</script>'))[1])
 check('input query array aman',request('/katalog?q[]=x&kategori[]=1')[0]==200)
 check('detail tidak ditemukan',request('/katalog/tidak-ada')[0]==404)
-check('WhatsApp placeholder nonaktif','Nomor WhatsApp toko belum diatur' in request('/katalog/kain-batik-kawung-sogan')[1])
+detail=request('/katalog/kain-batik-kawung-sogan')[1]
+wa_links=[html_module.unescape(link) for link in re.findall(r'href="([^"]+)"',detail)]
+wa_links=[link for link in wa_links if link.startswith('https://wa.me/')]
+if wa_links:
+ wa=urllib.parse.urlparse(html_module.unescape(wa_links[0]))
+ message=urllib.parse.parse_qs(wa.query).get('text',[''])[0]
+ check('WhatsApp produk valid',bool(re.fullmatch(r'/[1-9][0-9]{7,14}',wa.path)) and 'Kain Batik Kawung Sogan' in message and 'Rp185.000' in message)
+else:
+ check('WhatsApp placeholder nonaktif','Nomor WhatsApp toko belum diatur' in detail)
 name='Uji HTTP '+uuid.uuid4().hex[:8]
 data={'nama_produk':name,'kategori_id':'1','harga':'123000','deskripsi':'Deskripsi produk untuk pengujian HTTP otomatis.','status_ketersediaan':'tersedia'}
 _,html,url,_=post('/admin/produk/simpan',{**data,'harga':'-1'})

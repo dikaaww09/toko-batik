@@ -14,6 +14,7 @@ class ProductImages
         $name = bin2hex(random_bytes(16)) . '.' . $extension;
         $path = FCPATH . 'uploads/products/' . $name;
         try {
+            imagesavealpha($image, true);
             $saved = match ($extension) {
                 'jpg' => imagejpeg($image, $path, 85),
                 'png' => imagepng($image, $path, 7),

@@ -12,19 +12,23 @@ document.querySelectorAll('form[data-delete-name]').forEach(form => {
   });
 });
 const upload = document.getElementById('gambar');
+const preview = document.getElementById('image-preview');
+const originalPreview = preview?.src;
 let previewURL;
 if (upload) upload.addEventListener('change', () => {
   const file = upload.files[0];
   const status = document.getElementById('image-status');
   status.textContent = '';
+  if (previewURL) URL.revokeObjectURL(previewURL);
+  previewURL = undefined;
+  preview.src = originalPreview;
   if (!file) return;
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 2 * 1024 * 1024) {
     status.textContent = 'Pilih JPG, PNG, atau WebP maksimal 2 MB.';
     upload.value = '';
     return;
   }
-  if (previewURL) URL.revokeObjectURL(previewURL);
   previewURL = URL.createObjectURL(file);
-  document.getElementById('image-preview').src = previewURL;
+  preview.src = previewURL;
   status.textContent = 'Pratinjau diperbarui. Klik Simpan Produk untuk menyimpan.';
 });
