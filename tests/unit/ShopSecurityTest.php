@@ -4,6 +4,33 @@ use App\Libraries\ProductImages;
 use CodeIgniter\Test\CIUnitTestCase;
 final class ShopSecurityTest extends CIUnitTestCase
 {
+    public function testUploadedPngPreservesTransparency(): void
+    {
+        $source = tempnam(sys_get_temp_dir(), 'batik-alpha-');
+        $image = imagecreatetruecolor(1, 1);
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+        imagesetpixel($image, 0, 0, imagecolorallocatealpha($image, 120, 60, 20, 100));
+        imagepng($image, $source);
+        imagedestroy($image);
+        $images = new ProductImages();
+        $name = null;
+        try {
+            $file = $this->getMockBuilder(\CodeIgniter\HTTP\Files\UploadedFile::class)
+                ->setConstructorArgs([$source, 'transparent.png', 'image/png', filesize($source), UPLOAD_ERR_OK])
+                ->onlyMethods(['isValid'])->getMock();
+            $file->method('isValid')->willReturn(true);
+            $name = $images->store($file);
+            $stored = imagecreatefrompng(FCPATH . 'uploads/products/' . $name);
+            try {
+                $pixel = imagecolorsforindex($stored, imagecolorat($stored, 0, 0));
+                $this->assertSame(100, $pixel['alpha']);
+            } finally { imagedestroy($stored); }
+        } finally {
+            $images->delete($name);
+            unlink($source);
+        }
+    }
     public function testWhatsappMessageUsesProductAndEncodedQuery(): void
     {
         helper('shop');
