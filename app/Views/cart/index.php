@@ -1,0 +1,10 @@
+<?= $this->extend('layouts/main') ?><?= $this->section('content') ?>
+<section class="container section-space">
+<div class="page-heading"><p class="eyebrow">BELANJA</p><h1>Keranjang Anda</h1><p>Periksa jumlah produk sebelum melanjutkan ke checkout.</p></div>
+<?php if ($items): ?>
+<div class="row g-4 align-items-start"><div class="col-lg-8"><form method="post" action="<?= site_url('keranjang/perbarui') ?>"><?= csrf_field() ?><div class="cart-list">
+<?php foreach ($items as $item): $product = $item['product']; ?><article class="cart-item"><img src="<?= esc(product_image($product['gambar']), 'attr') ?>" alt="" width="96" height="108"><div class="cart-item-copy"><h2><?= esc($product['nama_produk']) ?></h2><p><?= rupiah($product['harga']) ?></p><label class="form-label" for="qty-<?= $product['id'] ?>">Jumlah</label><input class="form-control cart-quantity" id="qty-<?= $product['id'] ?>" type="number" name="qty[<?= $product['id'] ?>]" value="<?= $item['qty'] ?>" min="0" max="99" inputmode="numeric"></div><div class="cart-item-end"><strong><?= rupiah($item['subtotal']) ?></strong><button class="btn btn-sm btn-outline-danger" type="submit" formaction="<?= site_url('keranjang/hapus/' . $product['id']) ?>">Hapus</button></div></article><?php endforeach ?>
+</div><button class="btn btn-outline-primary mt-3" type="submit">Perbarui Keranjang</button></form></div>
+<div class="col-lg-4"><aside class="order-summary"><h2>Ringkasan</h2><div><span>Total barang</span><strong><?= (new \App\Libraries\ShoppingCart())->count() ?></strong></div><div class="summary-total"><span>Total</span><strong><?= rupiah($total) ?></strong></div><a class="btn btn-primary w-100" href="<?= site_url('checkout') ?>">Lanjut ke Checkout</a><a class="text-link justify-content-center w-100 mt-2" href="<?= site_url('katalog') ?>">Lanjut belanja</a></aside></div></div>
+<?php else: ?><div class="empty-state"><span aria-hidden="true">◇</span><h2>Keranjang masih kosong</h2><p>Pilih produk batik yang ingin Anda pesan.</p><a class="btn btn-primary" href="<?= site_url('katalog') ?>">Lihat Katalog</a></div><?php endif ?>
+</section><?= $this->endSection() ?>

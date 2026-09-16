@@ -32,3 +32,10 @@ if (upload) upload.addEventListener('change', () => {
   preview.src = previewURL;
   status.textContent = 'Pratinjau diperbarui. Klik Simpan Produk untuk menyimpan.';
 });
+const checkoutForm = document.querySelector('form[action$="/checkout"]');
+if (checkoutForm) checkoutForm.addEventListener('submit', () => {
+  const button = checkoutForm.querySelector('button[type="submit"]');
+  if (!button) return;
+  button.disabled = true;
+  button.textContent = 'Menyimpan Pesanan...';
+});

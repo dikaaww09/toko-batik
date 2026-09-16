@@ -1,0 +1,3 @@
+<?= $this->extend('layouts/main') ?><?= $this->section('content') ?>
+<section class="container section-space"><div class="success-panel"><span class="success-mark" aria-hidden="true">✓</span><p class="eyebrow">PESANAN TERSIMPAN</p><h1>Terima kasih, <?= esc($order['name']) ?>.</h1><p>Pesanan Anda sudah masuk dan akan diperiksa oleh admin toko.</p><div class="order-code"><span>Kode pesanan</span><strong><?= esc($order['code']) ?></strong></div><p class="success-total">Total pesanan <strong><?= rupiah($order['total']) ?></strong></p><a class="btn btn-primary" href="<?= site_url('katalog') ?>">Kembali ke Katalog</a></div></section>
+<?= $this->endSection() ?>

@@ -5,13 +5,13 @@ Website katalog batik untuk Uji Sertifikasi Kompetensi Junior Web Developer. Dib
 ## Fitur
 
 - Beranda, katalog dari database, pencarian nama, filter kategori, pagination, detail, Tentang, dan Kontak.
-- Tautan WhatsApp dengan nama dan harga produk. Tombol nonaktif jika nomor belum dikonfigurasi.
-- Login/logout admin, dashboard jumlah produk/kategori, CRUD produk, dan satu gambar utama.
+- Keranjang berbasis session, checkout tervalidasi, kode pesanan, dan penyimpanan transaksi.
+- Login/logout admin, dashboard jumlah produk/kategori/pesanan, CRUD produk, serta pengelolaan status pesanan.
 - CSRF berbasis session, regenerasi session saat login, pembatasan percobaan login, filter admin, validasi server, escaping output, serta header keamanan.
 - Unggahan JPG/JPEG, PNG, WebP maksimal 2 MB dan 3.000 × 3.000 px. Gambar dikodekan ulang dengan GD, nama acak, dan file lama dibersihkan setelah perubahan database berhasil. Tanpa gambar baru, gambar lama tetap digunakan.
 - Ilustrasi batik SVG lokal merupakan aset buatan proyek, bukan unggahan admin. SVG tidak diterima sebagai unggahan. Semua aset Bootstrap disimpan lokal; tidak ada ketergantungan CDN saat aplikasi berjalan.
 
-Tidak ada keranjang, checkout, pembayaran, registrasi pelanggan, pesanan, atau fitur penjualan lainnya. Kategori disediakan melalui seeder; CRUD kategori tidak ditambahkan karena tiga kategori sudah mencukupi tugas.
+Pembayaran online, registrasi pelanggan, laporan penjualan, dan penghitungan stok belum ditambahkan. Kategori disediakan melalui seeder; CRUD kategori belum ditambahkan karena tiga kategori sudah mencukupi tugas.
 
 ## Persyaratan
 
@@ -122,6 +122,8 @@ Database `toko_batik` menggunakan migration sebagai sumber struktur:
 | `admins` | `id`, `username` unik, `password` hash, `created_at`, `updated_at` |
 | `categories` | `id`, `nama` unik |
 | `products` | `id`, `nama_produk`, `slug` unik, `kategori_id`, `harga` DECIMAL(12,0), `deskripsi`, `gambar`, `status_ketersediaan`, `created_at`, `updated_at` |
+| `orders` | `id`, `kode_order` unik, data pembeli, `total`, `status`, `created_at`, `updated_at` |
+| `order_items` | `id`, `order_id`, snapshot produk dan harga, `qty`, `subtotal` |
 | `migrations` | Riwayat migration, dikelola CodeIgniter |
 
 Relasi `products.kategori_id` ke `categories.id` memakai foreign key. Kategori yang masih dipakai tidak dapat dihapus. Status adalah `tersedia` atau `tidak_tersedia`; tidak ada penghitungan stok. Slug dibuat otomatis dengan suffix acak dan dipertahankan saat edit supaya URL tetap stabil.

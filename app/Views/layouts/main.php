@@ -13,6 +13,7 @@
 <body>
 <a class="skip-link" href="#main-content">Langsung ke konten</a>
 <?= $this->include('partials/navbar') ?>
+<div class="container site-messages"><?= $this->include('partials/messages') ?></div>
 <main id="main-content"><?= $this->renderSection('content') ?></main>
 <?= $this->include('partials/footer') ?>
 </body></html>
