@@ -5,6 +5,10 @@ function rupiah($amount): string
 }
 function product_image(?string $filename): string
 {
+    $remoteUrl = \App\Libraries\ProductImages::normalizeRemoteUrl($filename);
+    if ($remoteUrl !== null) {
+        return $remoteUrl;
+    }
     if ($filename && preg_match('/^sample-[1-6]\.svg$/D', $filename)) {
         return base_url('assets/images/' . $filename);
     }

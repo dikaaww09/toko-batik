@@ -12,9 +12,26 @@ document.querySelectorAll('form[data-delete-name]').forEach(form => {
   });
 });
 const upload = document.getElementById('gambar');
+const imageUrl = document.getElementById('gambar_url');
 const preview = document.getElementById('image-preview');
 const originalPreview = preview?.src;
 let previewURL;
+const normalizeImageUrl = value => {
+  const url = value.trim();
+  const drive = url.match(/^https:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)(?:\/|$)/);
+  return drive ? `https://drive.google.com/uc?export=view&id=${encodeURIComponent(drive[1])}` : url;
+};
+const refreshImageSource = () => {
+  const source = document.querySelector('input[name="image_source"]:checked')?.value || 'upload';
+  document.querySelectorAll('[data-image-panel]').forEach(panel => {
+    panel.hidden = panel.dataset.imagePanel !== source;
+  });
+  if (source === 'url' && imageUrl?.value.trim()) preview.src = normalizeImageUrl(imageUrl.value);
+  if (source === 'upload' && !upload?.files[0]) preview.src = originalPreview;
+};
+document.querySelectorAll('input[name="image_source"]').forEach(input => input.addEventListener('change', refreshImageSource));
+if (imageUrl) imageUrl.addEventListener('input', refreshImageSource);
+refreshImageSource();
 if (upload) upload.addEventListener('change', () => {
   const file = upload.files[0];
   const status = document.getElementById('image-status');

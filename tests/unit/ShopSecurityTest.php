@@ -57,6 +57,19 @@ final class ShopSecurityTest extends CIUnitTestCase
         $this->assertSame($fallback, product_image('missing.jpg'));
         $this->assertSame(base_url('assets/images/sample-1.svg'), product_image('sample-1.svg'));
     }
+
+    public function testRemoteImageUrlsAreRestrictedAndGoogleDriveLinksAreNormalized(): void
+    {
+        helper('shop');
+        $direct = 'https://images.example.com/batik.webp';
+        $this->assertSame($direct, product_image($direct));
+        $this->assertSame(
+            'https://drive.google.com/uc?export=view&id=abc_123-XYZ',
+            ProductImages::normalizeRemoteUrl('https://drive.google.com/file/d/abc_123-XYZ/view?usp=sharing')
+        );
+        $this->assertNull(ProductImages::normalizeRemoteUrl('javascript:alert(1)'));
+        $this->assertNull(ProductImages::normalizeRemoteUrl('https://user:password@example.com/image.jpg'));
+    }
     public function testDeletionCannotRemoveStaticSamplesOrOutsideFile(): void
     {
         $file = WRITEPATH . 'delete-guard-test.txt';

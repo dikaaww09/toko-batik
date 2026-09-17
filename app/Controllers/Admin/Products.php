@@ -34,12 +34,16 @@ class Products extends BaseController
             'deskripsi' => ['label' => 'Deskripsi', 'rules' => 'required|min_length[10]|max_length[5000]'],
             'status_ketersediaan' => ['label' => 'Ketersediaan', 'rules' => 'required|in_list[tersedia,tidak_tersedia]'],
         ];
+        $input = $this->request->getPost();
+        $imageSource = $input['image_source'] ?? 'upload';
         $upload = $this->request->getFile('gambar');
         $hasUpload = $upload && $upload->getError() !== UPLOAD_ERR_NO_FILE;
-        if ($hasUpload) {
+        if ($imageSource === 'upload' && $hasUpload) {
             $rules['gambar'] = ['label' => 'Gambar', 'rules' => 'uploaded[gambar]|is_image[gambar]|mime_in[gambar,image/jpeg,image/png,image/webp]|ext_in[gambar,jpg,jpeg,png,webp]|max_size[gambar,2048]|max_dims[gambar,3000,3000]'];
         }
-        $input = $this->request->getPost();
+        if ($imageSource === 'url') {
+            $rules['gambar_url'] = ['label' => 'URL gambar', 'rules' => 'required|max_length[255]|valid_url_strict[http,https]'];
+        }
         foreach (['nama_produk', 'deskripsi'] as $field) {
             if (isset($input[$field]) && is_string($input[$field])) { $input[$field] = trim($input[$field]); }
         }
@@ -52,7 +56,14 @@ class Products extends BaseController
         $images = new ProductImages();
         $newImage = null;
         try {
-            if ($hasUpload) { $newImage = $images->store($upload); $data['gambar'] = $newImage; }
+            if ($imageSource === 'url') {
+                $newImage = ProductImages::normalizeRemoteUrl($input['gambar_url'] ?? '');
+                if ($newImage === null) { throw new \RuntimeException('URL gambar tidak valid.'); }
+                $data['gambar'] = $newImage;
+            } elseif ($hasUpload) {
+                $newImage = $images->store($upload);
+                $data['gambar'] = $newImage;
+            }
             if (! $product) {
                 $base = url_title($data['nama_produk'], '-', true) ?: 'produk';
                 $data['slug'] = $base . '-' . bin2hex(random_bytes(4));

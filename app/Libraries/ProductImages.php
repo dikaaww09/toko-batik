@@ -3,6 +3,26 @@ namespace App\Libraries;
 use CodeIgniter\HTTP\Files\UploadedFile;
 class ProductImages
 {
+    public static function normalizeRemoteUrl(?string $url): ?string
+    {
+        $url = trim((string) $url);
+        if ($url === '' || filter_var($url, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        $parts = parse_url($url);
+        if (! in_array(strtolower($parts['scheme'] ?? ''), ['http', 'https'], true)
+            || empty($parts['host']) || isset($parts['user']) || isset($parts['pass'])) {
+            return null;
+        }
+
+        if (preg_match('~^https://drive\.google\.com/file/d/([a-zA-Z0-9_-]+)(?:/|$)~', $url, $matches)) {
+            return 'https://drive.google.com/uc?export=view&id=' . rawurlencode($matches[1]);
+        }
+
+        return $url;
+    }
+
     public function store(UploadedFile $file): string
     {
         $extension = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$file->getMimeType()] ?? null;
