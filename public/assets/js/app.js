@@ -39,3 +39,32 @@ if (checkoutForm) checkoutForm.addEventListener('submit', () => {
   button.disabled = true;
   button.textContent = 'Menyimpan Pesanan...';
 });
+const cartForm = document.querySelector('[data-cart-form]');
+if (cartForm) {
+  const rupiah = value => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value).replace(/\s/g, '');
+  const refreshCart = () => {
+    let total = 0;
+    let count = 0;
+    cartForm.querySelectorAll('[data-cart-item]').forEach(item => {
+      const input = item.querySelector('.cart-quantity');
+      const quantity = Math.max(1, Math.min(Number(input.max), Number(input.value) || 1));
+      input.value = quantity;
+      const subtotal = Number(item.dataset.price) * quantity;
+      item.querySelector('[data-subtotal]').textContent = rupiah(subtotal);
+      total += subtotal;
+      count += quantity;
+    });
+    document.querySelector('[data-cart-total]').textContent = rupiah(total);
+    document.querySelector('[data-cart-count]').textContent = count;
+  };
+  cartForm.addEventListener('click', event => {
+    const button = event.target.closest('[data-qty-minus], [data-qty-plus]');
+    if (!button) return;
+    const input = button.closest('.quantity-control').querySelector('.cart-quantity');
+    input.value = Number(input.value) + (button.hasAttribute('data-qty-plus') ? 1 : -1);
+    refreshCart();
+  });
+  cartForm.addEventListener('input', event => {
+    if (event.target.matches('.cart-quantity')) refreshCart();
+  });
+}

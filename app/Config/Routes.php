@@ -25,7 +25,12 @@ $routes->group('admin', ['filter' => 'auth'], static function ($routes) {
     $routes->get('produk/edit/(:num)', 'Admin\Products::edit/$1');
     $routes->post('produk/update/(:num)', 'Admin\Products::update/$1');
     $routes->post('produk/hapus/(:num)', 'Admin\Products::delete/$1');
+    $routes->get('kategori', 'Admin\Categories::index');
+    $routes->post('kategori/simpan', 'Admin\Categories::store');
+    $routes->post('kategori/update/(:num)', 'Admin\Categories::update/$1');
+    $routes->post('kategori/hapus/(:num)', 'Admin\Categories::delete/$1');
     $routes->get('pesanan', 'Admin\Orders::index');
     $routes->get('pesanan/(:num)', 'Admin\Orders::show/$1');
     $routes->post('pesanan/status/(:num)', 'Admin\Orders::updateStatus/$1');
+    $routes->get('laporan', 'Admin\Reports::index');
 });

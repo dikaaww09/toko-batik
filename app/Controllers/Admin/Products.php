@@ -9,7 +9,7 @@ class Products extends BaseController
     public function index(): string
     {
         $model = (new ProductModel())->withCategory();
-        return view('admin/products/index', ['title' => 'Kelola Produk', 'products' => $model->orderBy('products.id', 'DESC')->paginate(10), 'pager' => $model->pager]);
+        return view('admin/products/index', ['title' => 'Kelola Produk', 'products' => $model->orderBy("CASE WHEN products.stok = 0 OR products.status_ketersediaan = 'tidak_tersedia' THEN 1 ELSE 0 END", '', false)->orderBy('products.id', 'DESC')->paginate(10), 'pager' => $model->pager]);
     }
     public function create(): string { return $this->form(); }
     public function edit(int $id): string { return $this->form($this->find($id)); }
@@ -30,6 +30,7 @@ class Products extends BaseController
             'nama_produk' => ['label' => 'Nama produk', 'rules' => 'required|min_length[3]|max_length[150]'],
             'kategori_id' => ['label' => 'Kategori', 'rules' => 'required|is_natural_no_zero|is_not_unique[categories.id]'],
             'harga' => ['label' => 'Harga', 'rules' => 'required|is_natural_no_zero|less_than_equal_to[999999999999]'],
+            'stok' => ['label' => 'Stok', 'rules' => 'required|is_natural|less_than_equal_to[999999]'],
             'deskripsi' => ['label' => 'Deskripsi', 'rules' => 'required|min_length[10]|max_length[5000]'],
             'status_ketersediaan' => ['label' => 'Ketersediaan', 'rules' => 'required|in_list[tersedia,tidak_tersedia]'],
         ];
@@ -45,7 +46,8 @@ class Products extends BaseController
         if (! $this->validateData($input, $rules)) {
             return redirect()->to(site_url($back))->withInput()->with('errors', $this->validator->getErrors());
         }
-        $data = array_intersect_key($input, array_flip(['nama_produk', 'kategori_id', 'harga', 'deskripsi', 'status_ketersediaan']));
+        $data = array_intersect_key($input, array_flip(['nama_produk', 'kategori_id', 'harga', 'stok', 'deskripsi', 'status_ketersediaan']));
+        if ((int) $data['stok'] === 0) { $data['status_ketersediaan'] = 'tidak_tersedia'; }
         $model = new ProductModel();
         $images = new ProductImages();
         $newImage = null;

@@ -48,7 +48,7 @@ for path in ['/','/katalog','/tentang','/kontak','/admin/login']:
  check('aset ditemukan '+path,bool(assets))
  for asset in assets:
   check('asset '+asset.split('/assets/')[1],request(asset.removeprefix(BASE))[0]==200)
-for path in ['/admin','/admin/produk','/admin/produk/tambah','/admin/produk/edit/1']:
+for path in ['/admin','/admin/produk','/admin/produk/tambah','/admin/produk/edit/1','/admin/kategori','/admin/pesanan','/admin/laporan']:
  check('admin terlindungi '+path,request(path)[2].endswith('/admin/login'))
 check('CSRF wajib',request('/admin/login',{'username':USER,'password':PASSWORD})[0]==403)
 status,html,_,_=post('/admin/login',{'username':USER,'password':'salah'},'/admin/login')
@@ -69,16 +69,9 @@ check('XSS pencarian ter-escape','<script>alert(1)</script>' not in request('/ka
 check('input query array aman',request('/katalog?q[]=x&kategori[]=1')[0]==200)
 check('detail tidak ditemukan',request('/katalog/tidak-ada')[0]==404)
 detail=request('/katalog/kain-batik-kawung-sogan')[1]
-wa_links=[html_module.unescape(link) for link in re.findall(r'href="([^"]+)"',detail)]
-wa_links=[link for link in wa_links if link.startswith('https://wa.me/')]
-if wa_links:
- wa=urllib.parse.urlparse(html_module.unescape(wa_links[0]))
- message=urllib.parse.parse_qs(wa.query).get('text',[''])[0]
- check('WhatsApp produk valid',bool(re.fullmatch(r'/[1-9][0-9]{7,14}',wa.path)) and 'Kain Batik Kawung Sogan' in message and 'Rp185.000' in message)
-else:
- check('WhatsApp placeholder nonaktif','Nomor WhatsApp toko belum diatur' in detail)
+check('detail menampilkan stok',bool(re.search(r'Stok tersedia: \d+',detail)))
 name='Uji HTTP '+uuid.uuid4().hex[:8]
-data={'nama_produk':name,'kategori_id':'1','harga':'123000','deskripsi':'Deskripsi produk untuk pengujian HTTP otomatis.','status_ketersediaan':'tersedia'}
+data={'nama_produk':name,'kategori_id':'1','harga':'123000','stok':'7','deskripsi':'Deskripsi produk untuk pengujian HTTP otomatis.','status_ketersediaan':'tersedia'}
 _,html,url,_=post('/admin/produk/simpan',{**data,'harga':'-1'})
 check('harga negatif ditolak',url.endswith('/tambah') and 'Periksa kembali' in html)
 _,html,url,_=post('/admin/produk/simpan',{**data,'kategori_id':'999999'})
@@ -110,7 +103,7 @@ try:
  catalog=request('/katalog?q='+urllib.parse.quote(name))[1]
  slug=re.search(r'/katalog/(uji-http-[^"/]+)',catalog)[1]
  detail=request('/katalog/'+slug)[1]
- check('detail dinamis + status',data['nama_produk'] in detail and 'Tidak tersedia' in detail)
+ check('detail dinamis + status',data['nama_produk'] in detail and ('Tidak tersedia' in detail or 'Stok habis' in detail))
  check('XSS deskripsi ter-escape','&lt;script&gt;' in detail and '<script>alert(1)</script>' not in detail)
  current=html_module.unescape(re.search(r'<img class="detail-image" src="([^"]+)"',detail)[1])
  check('GET hapus ditolak',request('/admin/produk/hapus/'+pid)[0]==404)

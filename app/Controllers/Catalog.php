@@ -16,7 +16,10 @@ class Catalog extends BaseController
         return view('catalog/index', [
             'title' => 'Koleksi Batik', 'active' => 'katalog', 'q' => $q, 'category' => $category,
             'categories' => (new CategoryModel())->findAll(),
-            'products' => $model->orderBy('products.id', 'DESC')->paginate(9), 'pager' => $model->pager,
+            'products' => $model
+                ->orderBy("CASE WHEN products.stok = 0 OR products.status_ketersediaan = 'tidak_tersedia' THEN 1 ELSE 0 END", '', false)
+                ->orderBy('products.id', 'DESC')
+                ->paginate(9), 'pager' => $model->pager,
         ]);
     }
     public function show(string $slug): string

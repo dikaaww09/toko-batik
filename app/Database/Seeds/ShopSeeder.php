@@ -34,6 +34,7 @@ class ShopSeeder extends Seeder
             if (! $products->where('slug', $slug)->first()) {
                 $products->insert([
                     'nama_produk' => $name, 'slug' => $slug, 'kategori_id' => $ids[$category], 'harga' => $price,
+                    'stok' => $index === 5 ? 0 : 10,
                     'deskripsi' => 'Produk contoh untuk katalog Batik Pusaka. Perpaduan corak batik dan warna hangat untuk melengkapi gaya Anda. Hubungi kami untuk menanyakan bahan, ukuran, dan ketersediaan. Gambar berupa ilustrasi; ganti dengan foto serta spesifikasi produk asli sebelum toko dipublikasikan.',
                     'gambar' => 'sample-' . ($index + 1) . '.svg',
                     'status_ketersediaan' => $index === 5 ? 'tidak_tersedia' : 'tersedia',

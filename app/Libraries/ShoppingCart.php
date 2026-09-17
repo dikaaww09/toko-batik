@@ -46,9 +46,10 @@ class ShoppingCart
         $total = 0;
         foreach ($products as $product) {
             $quantity = (int) ($cart[$product['id']] ?? 0);
-            if ($quantity < 1 || $product['status_ketersediaan'] !== 'tersedia') {
+            if ($quantity < 1 || $product['status_ketersediaan'] !== 'tersedia' || (int) $product['stok'] < 1) {
                 continue;
             }
+            $quantity = min($quantity, (int) $product['stok']);
             $subtotal = (int) $product['harga'] * $quantity;
             $items[] = ['product' => $product, 'qty' => $quantity, 'subtotal' => $subtotal];
             $total += $subtotal;

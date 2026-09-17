@@ -15,13 +15,19 @@ class Cart extends BaseController
     public function add(int $id)
     {
         $product = (new ProductModel())->find($id);
-        if (! $product || $product['status_ketersediaan'] !== 'tersedia') {
+        if (! $product || $product['status_ketersediaan'] !== 'tersedia' || (int) $product['stok'] < 1) {
             return redirect()->back()->with('error', 'Produk tidak tersedia untuk ditambahkan.');
         }
         $cart = new ShoppingCart();
         $quantity = max(1, min(99, (int) $this->request->getPost('qty')));
-        $cart->set($id, ($cart->quantities()[$id] ?? 0) + $quantity);
-        return redirect()->to(site_url('keranjang'))->with('success', 'Produk ditambahkan ke keranjang.');
+        $newQuantity = ($cart->quantities()[$id] ?? 0) + $quantity;
+        if ($newQuantity > (int) $product['stok']) {
+            return redirect()->back()->with('error', 'Jumlah melebihi stok. Stok ' . $product['nama_produk'] . ' tersisa ' . $product['stok'] . '.');
+        }
+        $cart->set($id, $newQuantity);
+        $returnTo = (string) $this->request->getPost('return_to');
+        if (! preg_match('#^katalog(?:/[a-z0-9-]+)?$#D', $returnTo)) { $returnTo = 'katalog'; }
+        return redirect()->to(site_url($returnTo))->with('success', 'Produk ditambahkan ke keranjang.');
     }
 
     public function update()
@@ -31,7 +37,13 @@ class Cart extends BaseController
             $cart = new ShoppingCart();
             foreach ($cart->quantities() as $id => $_) {
                 if (array_key_exists($id, $quantities) && is_scalar($quantities[$id])) {
-                    $cart->set((int) $id, max(0, min(99, (int) $quantities[$id])));
+                    $product = (new ProductModel())->find((int) $id);
+                    if (! $product || (int) $product['stok'] < 1) {
+                        $cart->set((int) $id, 0);
+                        continue;
+                    }
+                    $quantity = max(1, min(99, (int) $quantities[$id]));
+                    $cart->set((int) $id, min($quantity, (int) $product['stok']));
                 }
             }
         }
