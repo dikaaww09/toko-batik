@@ -46,7 +46,10 @@ class Orders extends BaseController
                 $items = (new OrderItemModel())->where('order_id', $id)->findAll();
                 foreach ($items as $item) {
                     if (! $item['product_id']) { continue; }
-                    $db->query('UPDATE products SET stok = stok + ?, status_ketersediaan = ? WHERE id = ?', [$item['qty'], 'tersedia', $item['product_id']]);
+                    $product = $db->table('products')->where('id', $item['product_id'])->get()->getRowArray();
+                    if ($product) {
+                        $db->query('UPDATE products SET stok = stok + ?, status_ketersediaan = ? WHERE id = ?', [$item['qty'], 'tersedia', $item['product_id']]);
+                    }
                 }
                 $data['stok_dikembalikan'] = 1;
             }
