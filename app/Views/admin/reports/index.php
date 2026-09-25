@@ -8,9 +8,16 @@
         <p style="margin: 0; font-size: 14px;">CORAK NUSANTARA</p>
         <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;">Ponorogo, Jawa Timur | Telp: 081234567890</p>
         <h2 style="font-size: 18px; margin: 20px 0 5px 0; text-transform: uppercase;">Laporan Penjualan</h2>
-        <p style="margin: 0; font-size: 14px;">
-            Periode: <?= $start ? date('d/m/Y', strtotime($start)) : 'Awal' ?> s.d <?= $end ? date('d/m/Y', strtotime($end)) : 'Sekarang' ?>
-        </p>
+        <table style="font-size: 14px; margin: 15px auto 0; text-align: left;">
+            <tr>
+                <td style="padding-right: 15px;">Periode</td>
+                <td>: <?= $start ? date('d/m/Y', strtotime($start)) : 'Awal' ?> s.d <?= $end ? date('d/m/Y', strtotime($end)) : 'Sekarang' ?></td>
+            </tr>
+            <tr>
+                <td style="padding-right: 15px;">Toko/Outlet</td>
+                <td>: Semua (Online)</td>
+            </tr>
+        </table>
     </div>
 </div>
 
@@ -36,104 +43,46 @@
     <a class="btn btn-outline-primary" href="<?= site_url('admin/laporan') ?>">Reset</a>
 </form>
 
-<!-- RINGKASAN UNTUK LAYAR WEB -->
-<div class="row g-3 mb-4 d-print-none">
-    <div class="col-sm-4">
-        <div class="stat-card">
-            <span>Transaksi selesai</span>
-            <strong><?= count($orders) ?></strong>
-        </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="stat-card">
-            <span>Produk terjual</span>
-            <strong><?= $sold ?></strong>
-        </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="stat-card">
-            <span>Pendapatan</span>
-            <strong class="report-money"><?= rupiah($revenue) ?></strong>
-        </div>
-    </div>
-</div>
-
-<!-- RINGKASAN UNTUK CETAK (TAMPILAN DOKUMEN FORMAL) -->
-<div class="d-none d-print-block" style="margin-bottom: 30px;">
-    <h3 style="font-size: 16px; margin: 0 0 10px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">A. Ringkasan Laporan</h3>
-    <table style="font-size: 14px; margin-top: 5px;">
-        <tr>
-            <td style="padding: 4px 15px 4px 0;">Total Transaksi Selesai</td>
-            <td style="padding: 4px 0;">: <strong><?= count($orders) ?></strong> pesanan</td>
-        </tr>
-        <tr>
-            <td style="padding: 4px 15px 4px 0;">Total Produk Terjual</td>
-            <td style="padding: 4px 0;">: <strong><?= $sold ?></strong> barang</td>
-        </tr>
-        <tr>
-            <td style="padding: 4px 15px 4px 0;">Total Pendapatan (Omzet)</td>
-            <td style="padding: 4px 0;">: <strong><?= rupiah($revenue) ?></strong></td>
-        </tr>
+<div class="admin-table table-responsive mb-4">
+    <table class="table mb-0 table-bordered">
+        <thead style="background-color: #8c0000; color: white;">
+            <tr>
+                <th class="text-center" style="width: 50px; background-color: #8c0000; color: white;">No</th>
+                <th style="background-color: #8c0000; color: white;">Tanggal</th>
+                <th style="background-color: #8c0000; color: white;">No. Invoice</th>
+                <th style="background-color: #8c0000; color: white;">Produk</th>
+                <th class="text-center" style="background-color: #8c0000; color: white;">Qty</th>
+                <th style="background-color: #8c0000; color: white;">Harga Satuan</th>
+                <th style="background-color: #8c0000; color: white;">Total</th>
+                <th style="background-color: #8c0000; color: white;">Metode Bayar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php $no = 1; ?>
+            <?php foreach ($reportItems as $item): ?>
+                <tr>
+                    <td class="text-center"><?= $no++ ?></td>
+                    <td><?= date('d/m/Y', strtotime($item['created_at'])) ?></td>
+                    <td><?= esc($item['kode_order']) ?></td>
+                    <td><?= esc($item['nama_produk']) ?></td>
+                    <td class="text-center"><?= (int) $item['qty'] ?></td>
+                    <td><?= rupiah($item['harga']) ?></td>
+                    <td><?= rupiah($item['subtotal']) ?></td>
+                    <td><?= strtoupper(str_replace('_', ' ', esc($item['metode_pembayaran']))) ?></td>
+                </tr>
+            <?php endforeach ?>
+            <?php if (! $reportItems): ?>
+                <tr><td colspan="8" class="text-center p-4">Belum ada penjualan selesai.</td></tr>
+            <?php else: ?>
+                <tr style="background-color: #fffaf5; font-weight: bold;">
+                    <td colspan="4" class="text-center">TOTAL</td>
+                    <td class="text-center"><?= $totalQty ?></td>
+                    <td></td>
+                    <td colspan="2"><?= rupiah($totalRevenue) ?></td>
+                </tr>
+            <?php endif ?>
+        </tbody>
     </table>
-</div>
-
-<div class="row g-4 print-stack">
-    <div class="col-lg-7 print-col-12">
-        <h2 class="admin-subheading d-print-none">Daftar Transaksi Selesai</h2>
-        <h3 class="d-none d-print-block" style="font-size: 16px; margin: 0 0 10px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">B. Daftar Transaksi Selesai</h3>
-        <div class="admin-table table-responsive">
-            <table class="table mb-0">
-                <thead>
-                    <tr>
-                        <th>Kode</th>
-                        <th>Tanggal</th>
-                        <th>Pembeli</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($orders as $order): ?>
-                        <tr>
-                            <td><?= esc($order['kode_order']) ?></td>
-                            <td><?= date('d-m-Y', strtotime($order['created_at'])) ?></td>
-                            <td><?= esc($order['nama_pembeli']) ?></td>
-                            <td><?= rupiah($order['total']) ?></td>
-                        </tr>
-                    <?php endforeach ?>
-                    <?php if (! $orders): ?>
-                        <tr><td colspan="4" class="text-center p-4">Belum ada penjualan selesai.</td></tr>
-                    <?php endif ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="col-lg-5 print-col-12">
-        <h2 class="admin-subheading mt-print-4 d-print-none">Produk Terlaris (Top 10)</h2>
-        <h3 class="d-none d-print-block" style="font-size: 16px; margin: 30px 0 10px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">C. Produk Terlaris (Top 10)</h3>
-        <div class="admin-table table-responsive">
-            <table class="table mb-0">
-                <thead>
-                    <tr>
-                        <th>Produk</th>
-                        <th>Terjual</th>
-                        <th>Omzet</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($bestProducts as $item): ?>
-                        <tr>
-                            <td><?= esc($item['nama_produk']) ?></td>
-                            <td><?= (int) $item['terjual'] ?></td>
-                            <td><?= rupiah($item['omzet']) ?></td>
-                        </tr>
-                    <?php endforeach ?>
-                    <?php if (! $bestProducts): ?>
-                        <tr><td colspan="3" class="text-center p-4">Belum ada data.</td></tr>
-                    <?php endif ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
 
 <!-- TTD PRINT ONLY -->
@@ -142,5 +91,22 @@
     <br><br><br>
     <p><strong>Admin Toko</strong></p>
 </div>
+
+<style>
+@media print {
+    .table-bordered { border: 1px solid #ddd !important; }
+    .table-bordered th, .table-bordered td { border: 1px solid #ddd !important; }
+    th {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        background-color: #8c0000 !important;
+        color: white !important;
+    }
+    tr[style*="background-color"] {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+}
+</style>
 
 <?= $this->endSection() ?>
