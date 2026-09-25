@@ -14,7 +14,7 @@ document.querySelectorAll('form[data-delete-name]').forEach(form => {
 const upload = document.getElementById('gambar');
 const imageUrl = document.getElementById('gambar_url');
 const preview = document.getElementById('image-preview');
-const originalPreview = preview?.src;
+const originalPreview = preview ? preview.src : undefined;
 let previewURL;
 const normalizeImageUrl = value => {
   const url = value.trim();
@@ -22,12 +22,13 @@ const normalizeImageUrl = value => {
   return drive ? `https://drive.google.com/uc?export=view&id=${encodeURIComponent(drive[1])}` : url;
 };
 const refreshImageSource = () => {
-  const source = document.querySelector('input[name="image_source"]:checked')?.value || 'upload';
+  const sourceEl = document.querySelector('input[name="image_source"]:checked');
+  const source = sourceEl ? sourceEl.value : 'upload';
   document.querySelectorAll('[data-image-panel]').forEach(panel => {
     panel.hidden = panel.dataset.imagePanel !== source;
   });
-  if (source === 'url' && imageUrl?.value.trim()) preview.src = normalizeImageUrl(imageUrl.value);
-  if (source === 'upload' && !upload?.files[0]) preview.src = originalPreview;
+  if (source === 'url' && imageUrl && imageUrl.value.trim()) preview.src = normalizeImageUrl(imageUrl.value);
+  if (source === 'upload' && (!upload || !upload.files[0])) preview.src = originalPreview;
 };
 document.querySelectorAll('input[name="image_source"]').forEach(input => input.addEventListener('change', refreshImageSource));
 if (imageUrl) imageUrl.addEventListener('input', refreshImageSource);

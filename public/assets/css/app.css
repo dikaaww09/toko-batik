@@ -17,7 +17,7 @@
 .sales-chart-y-axis{display:flex;flex-direction:column;justify-content:space-between;padding-bottom:28px;text-align:right;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:65px}
 .sales-chart-grid{flex-grow:1;position:relative}
 .sales-chart-gridline{position:absolute;left:0;right:0;height:1px;background-color:#e6dfd4;z-index:1}
-.sales-chart-bars{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;position:absolute;inset:0 0 28px 0;z-index:2;align-items:end}
+.sales-chart-bars{display:grid;grid-template-columns:repeat(var(--chart-cols, 7), 1fr);gap:4px;position:absolute;inset:0 0 28px 0;z-index:2;align-items:end}
 .sales-chart-col{display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
 .sales-chart-hitbox{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;position:relative;padding:0 2px;cursor:pointer;outline:none}
 .sales-chart-bar{width:100%;max-width:24px;min-height:2px;border-radius:4px 4px 0 0;background:var(--accent);transition:background-color 0.2s}
@@ -27,3 +27,8 @@
 .sales-chart-hitbox:hover .sales-chart-tooltip, .sales-chart-hitbox:focus .sales-chart-tooltip{opacity:1;visibility:visible;bottom:calc(100% + 12px)}
 .sales-chart-x-label{font-size:11px;color:var(--muted);margin-top:10px;white-space:nowrap}
 @media(max-width:767px){.sales-chart-container{flex-direction:column}.sales-chart-y-axis{flex-direction:row;padding-bottom:0;min-width:0;justify-content:space-between}.sales-chart-grid{min-height:220px}.sales-chart-bars{overflow-x:auto;grid-template-columns:repeat(7,50px);justify-content:start}.dashboard-chart-panel .section-heading h2{font-size:25px}}
+
+.top-products-list{display:flex;flex-direction:column;gap:20px}
+.top-product-item{display:flex;flex-direction:column}
+.top-product-track{background:#e8dfd0;border-radius:3px;height:12px;width:100%;overflow:hidden}
+.top-product-bar{background:var(--accent);height:100%;border-radius:3px;transition:width 0.4s ease}
