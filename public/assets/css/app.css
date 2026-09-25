@@ -10,7 +10,23 @@
 @media(max-width:767px){.row.g-5{--bs-gutter-x:24px}}
 .stock-info{font-size:12px;color:var(--muted);margin-top:-4px}.quantity-control{display:grid;grid-template-columns:44px 68px 44px;width:max-content}.quantity-control button{border:1px solid #cfc2b3;background:#fffdf9;color:var(--ink);font-size:20px;min-height:48px}.quantity-control button:first-child{border-radius:5px 0 0 5px}.quantity-control button:last-child{border-radius:0 5px 5px 0}.quantity-control .cart-quantity{width:68px;border-radius:0;text-align:center;border-left:0;border-right:0}.payment-option{display:flex;gap:12px;align-items:flex-start;padding:16px;border:1px solid #cfc2b3;border-radius:5px;background:#fffdf9;cursor:pointer}.payment-option input{margin-top:6px}.payment-option span,.payment-option small{display:block}.payment-option small{color:var(--muted);margin-top:3px}.report-filter{display:flex;align-items:end;gap:14px}.report-filter>div{min-width:180px}.report-filter .filter-grow{flex:1}.admin-subheading{font:600 18px Arial;margin-bottom:14px}.report-money{font-size:26px!important;overflow-wrap:anywhere}.status-dikirim{background:#dce8f2;color:#234f70}
 @media(max-width:767px){.report-filter{align-items:stretch;flex-direction:column}.report-filter>div{width:100%}.report-filter .btn{width:100%}}
-@media print{.no-print,.admin-header,.admin-nav,.admin-footer{display:none!important}.admin-main{padding:0;max-width:none}.form-panel,.admin-table,.stat-card{border:1px solid #aaa;background:#fff!important}.container{max-width:none}body{background:#fff;color:#000}}
+@media print{
+  @page{margin:1.5cm}
+  .no-print,.admin-header,.admin-nav,.admin-footer{display:none!important}
+  .admin-main{padding:0;max-width:none}
+  .form-panel,.admin-table,.stat-card{border:1px solid #ddd;background:#fff!important;box-shadow:none!important;border-radius:0}
+  .container{max-width:none;padding:0}
+  body{background:#fff;color:#000}
+  .print-row{display:flex;flex-wrap:wrap;gap:0}
+  .print-col-4{width:33.333333%;padding:5px}
+  .print-stack{display:block}
+  .print-col-12{width:100%;margin-bottom:20px}
+  .mt-print-4{margin-top:1.5rem}
+  .stat-card{padding:15px;margin-bottom:10px}
+  .stat-card strong{font-size:24px}
+  th{background-color:#f8f9fa!important;-webkit-print-color-adjust:exact;color-adjust:exact}
+  .d-print-block{display:block!important}
+}
 .report-filter .btn{margin-top:14px}
 .dashboard-chart-panel{margin-top:30px}.dashboard-chart-panel .section-heading h2{font-size:30px}
 .sales-chart-container{display:flex;gap:16px;margin-top:20px;min-height:250px}
