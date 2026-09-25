@@ -23,7 +23,8 @@ const normalizeImageUrl = value => {
 };
 const refreshImageSource = () => {
   const sourceEl = document.querySelector('input[name="image_source"]:checked');
-  const source = sourceEl ? sourceEl.value : 'upload';
+  if (!sourceEl) return;
+  const source = sourceEl.value;
   document.querySelectorAll('[data-image-panel]').forEach(panel => {
     panel.hidden = panel.dataset.imagePanel !== source;
   });
