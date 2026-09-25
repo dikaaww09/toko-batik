@@ -7,9 +7,9 @@
     <title><?= esc($title) ?> — Admin Batik Pusaka</title>
     <link rel="icon" href="<?= base_url('assets/images/mark.svg') ?>" type="image/svg+xml">
     <link rel="stylesheet" href="<?= base_url('assets/vendor/bootstrap/bootstrap.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=20260925-print') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=20260925-print2') ?>">
     <script defer src="<?= base_url('assets/vendor/bootstrap/bootstrap.bundle.min.js') ?>"></script>
-    <script defer src="<?= base_url('assets/js/app.js?v=20260925-1') ?>"></script>
+    <script defer src="<?= base_url('assets/js/app.js?v=20260925-fixcart') ?>"></script>
 </head>
 <body class="admin-body">
 <a class="skip-link" href="#main-content">Langsung ke konten</a>

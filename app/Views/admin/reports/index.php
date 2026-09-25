@@ -36,20 +36,21 @@
     <a class="btn btn-outline-primary" href="<?= site_url('admin/laporan') ?>">Reset</a>
 </form>
 
-<div class="row g-3 mb-4 print-row">
-    <div class="col-sm-4 print-col-4">
+<!-- RINGKASAN UNTUK LAYAR WEB -->
+<div class="row g-3 mb-4 d-print-none">
+    <div class="col-sm-4">
         <div class="stat-card">
             <span>Transaksi selesai</span>
             <strong><?= count($orders) ?></strong>
         </div>
     </div>
-    <div class="col-sm-4 print-col-4">
+    <div class="col-sm-4">
         <div class="stat-card">
             <span>Produk terjual</span>
             <strong><?= $sold ?></strong>
         </div>
     </div>
-    <div class="col-sm-4 print-col-4">
+    <div class="col-sm-4">
         <div class="stat-card">
             <span>Pendapatan</span>
             <strong class="report-money"><?= rupiah($revenue) ?></strong>
@@ -57,9 +58,29 @@
     </div>
 </div>
 
+<!-- RINGKASAN UNTUK CETAK (TAMPILAN DOKUMEN FORMAL) -->
+<div class="d-none d-print-block" style="margin-bottom: 30px;">
+    <h3 style="font-size: 16px; margin: 0 0 10px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">A. Ringkasan Laporan</h3>
+    <table style="font-size: 14px; margin-top: 5px;">
+        <tr>
+            <td style="padding: 4px 15px 4px 0;">Total Transaksi Selesai</td>
+            <td style="padding: 4px 0;">: <strong><?= count($orders) ?></strong> pesanan</td>
+        </tr>
+        <tr>
+            <td style="padding: 4px 15px 4px 0;">Total Produk Terjual</td>
+            <td style="padding: 4px 0;">: <strong><?= $sold ?></strong> barang</td>
+        </tr>
+        <tr>
+            <td style="padding: 4px 15px 4px 0;">Total Pendapatan (Omzet)</td>
+            <td style="padding: 4px 0;">: <strong><?= rupiah($revenue) ?></strong></td>
+        </tr>
+    </table>
+</div>
+
 <div class="row g-4 print-stack">
     <div class="col-lg-7 print-col-12">
-        <h2 class="admin-subheading">Daftar Transaksi Selesai</h2>
+        <h2 class="admin-subheading d-print-none">Daftar Transaksi Selesai</h2>
+        <h3 class="d-none d-print-block" style="font-size: 16px; margin: 0 0 10px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">B. Daftar Transaksi Selesai</h3>
         <div class="admin-table table-responsive">
             <table class="table mb-0">
                 <thead>
@@ -87,7 +108,8 @@
         </div>
     </div>
     <div class="col-lg-5 print-col-12">
-        <h2 class="admin-subheading mt-print-4">Produk Terlaris (Top 10)</h2>
+        <h2 class="admin-subheading mt-print-4 d-print-none">Produk Terlaris (Top 10)</h2>
+        <h3 class="d-none d-print-block" style="font-size: 16px; margin: 30px 0 10px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">C. Produk Terlaris (Top 10)</h3>
         <div class="admin-table table-responsive">
             <table class="table mb-0">
                 <thead>

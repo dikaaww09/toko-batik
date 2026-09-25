@@ -27,8 +27,10 @@ const refreshImageSource = () => {
   document.querySelectorAll('[data-image-panel]').forEach(panel => {
     panel.hidden = panel.dataset.imagePanel !== source;
   });
-  if (source === 'url' && imageUrl && imageUrl.value.trim()) preview.src = normalizeImageUrl(imageUrl.value);
-  if (source === 'upload' && (!upload || !upload.files[0])) preview.src = originalPreview;
+  if (preview) {
+    if (source === 'url' && imageUrl && imageUrl.value.trim()) preview.src = normalizeImageUrl(imageUrl.value);
+    if (source === 'upload' && (!upload || !upload.files[0])) preview.src = originalPreview;
+  }
 };
 document.querySelectorAll('input[name="image_source"]').forEach(input => input.addEventListener('change', refreshImageSource));
 if (imageUrl) imageUrl.addEventListener('input', refreshImageSource);
