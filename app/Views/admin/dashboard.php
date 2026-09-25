@@ -19,18 +19,42 @@
         </div>
         <span class="status-pill">Pesanan selesai</span>
     </div>
-    <?php if ($salesChart): ?>
-    <div class="sales-chart" role="img" aria-label="Grafik pendapatan dari pesanan selesai berdasarkan tanggal penjualan terbaru">
-        <?php foreach ($salesChart as $day): ?>
-            <div class="sales-chart-item">
-                <div class="sales-chart-bar-wrap">
-                    <span class="sales-chart-value"><?= rupiah($day['revenue']) ?></span>
-                    <span class="sales-chart-bar" style="height: <?= (int) $day['height'] ?>%"></span>
+    <?php if ($salesChart):
+        $maxRev = max(array_column($salesChart, 'revenue')) ?: 1;
+    ?>
+    <div class="sales-chart-container" role="img" aria-label="Grafik pendapatan dari pesanan selesai berdasarkan tanggal penjualan terbaru">
+        <div class="sales-chart-y-axis">
+            <span><?= rupiah($maxRev) ?></span>
+            <span><?= rupiah((int)($maxRev / 2)) ?></span>
+            <span>Rp0</span>
+        </div>
+        <div class="sales-chart-grid">
+            <div class="sales-chart-gridline" style="bottom: 100%;"></div>
+            <div class="sales-chart-gridline" style="bottom: 50%;"></div>
+            <div class="sales-chart-gridline" style="bottom: 0%;"></div>
+
+            <div class="sales-chart-bars">
+            <?php foreach ($salesChart as $day): ?>
+                <div class="sales-chart-col">
+                    <div class="sales-chart-hitbox" tabindex="0">
+                        <div class="sales-chart-bar" style="height: <?= (int) $day['height'] ?>%"></div>
+                        <div class="sales-chart-tooltip">
+                            <strong class="d-block mb-1"><?= esc($day['label']) ?></strong>
+                            <div class="d-flex justify-content-between gap-3 mb-1">
+                                <span style="opacity: 0.8">Pendapatan</span>
+                                <strong style="color: #ffccaa"><?= rupiah($day['revenue']) ?></strong>
+                            </div>
+                            <div class="d-flex justify-content-between gap-3">
+                                <span style="opacity: 0.8">Transaksi</span>
+                                <strong><?= (int) $day['orders'] ?></strong>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="sales-chart-x-label"><?= esc($day['label']) ?></span>
                 </div>
-                <strong><?= esc($day['label']) ?></strong>
-                <span><?= (int) $day['orders'] ?> trx</span>
+            <?php endforeach ?>
             </div>
-        <?php endforeach ?>
+        </div>
     </div>
     <?php else: ?>
         <div class="empty-state compact-empty"><span aria-hidden="true">↗</span><h2>Belum ada transaksi selesai</h2><p>Grafik akan muncul setelah pesanan ditandai selesai.</p></div>
