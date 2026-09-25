@@ -3,21 +3,34 @@
 namespace App\Controllers;
 
 use App\Libraries\ShoppingCart;
-use App\Models\{OrderModel, OrderItemModel};
+use App\Models\{OrderModel, OrderItemModel, CustomerModel};
 
 class Checkout extends BaseController
 {
     public function index()
     {
+        if (! session()->get('customer_id')) {
+            session()->set('redirect_url', current_url());
+            return redirect()->to(site_url('login'))->with('error', 'Silakan login terlebih dahulu untuk melakukan checkout.');
+        }
+
         $cart = (new ShoppingCart())->details();
         if ($cart['items'] === []) {
             return redirect()->to(site_url('keranjang'))->with('error', 'Keranjang masih kosong.');
         }
-        return view('checkout/index', ['title' => 'Checkout', 'active' => 'keranjang'] + $cart);
+
+        $customerModel = new CustomerModel();
+        $customer = $customerModel->find(session()->get('customer_id'));
+
+        return view('checkout/index', ['title' => 'Checkout', 'active' => 'keranjang', 'customer' => $customer] + $cart);
     }
 
     public function store()
     {
+        if (! session()->get('customer_id')) {
+            return redirect()->to(site_url('login'))->with('error', 'Silakan login terlebih dahulu untuk melakukan checkout.');
+        }
+
         $cartService = new ShoppingCart();
         $cart = $cartService->details();
         if ($cart['items'] === []) {
@@ -56,6 +69,7 @@ class Checkout extends BaseController
 
             $code = 'BP-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
             $orderId = (new OrderModel())->insert([
+                'customer_id' => session()->get('customer_id'),
                 'kode_order' => $code, 'nama_pembeli' => $input['nama_pembeli'], 'whatsapp' => $input['whatsapp'],
                 'alamat' => $input['alamat'], 'catatan' => $input['catatan'] ?: null, 'total' => $total,
                 'metode_pembayaran' => 'cod', 'status_pembayaran' => 'belum_dibayar', 'status' => 'baru',

@@ -14,6 +14,15 @@ $routes->post('keranjang/hapus/(:num)', 'Cart::remove/$1');
 $routes->get('checkout', 'Checkout::index');
 $routes->post('checkout', 'Checkout::store');
 $routes->get('checkout/berhasil', 'Checkout::success');
+
+// Customer Auth Routes
+$routes->get('login', 'CustomerAuth::login');
+$routes->post('login', 'CustomerAuth::authenticate');
+$routes->get('register', 'CustomerAuth::register');
+$routes->post('register', 'CustomerAuth::store');
+$routes->post('logout', 'CustomerAuth::logout');
+$routes->get('akun', 'Account::index');
+
 $routes->get('admin/login', 'Auth::login');
 $routes->post('admin/login', 'Auth::authenticate');
 $routes->group('admin', ['filter' => 'auth'], static function ($routes) {
