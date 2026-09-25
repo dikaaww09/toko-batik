@@ -67,7 +67,7 @@
                 </div>
             </div>
             <?php else: ?>
-                <div class="empty-state compact-empty"><span aria-hidden="true">↗</span><h2>Belum ada transaksi selesai</h2><p>Grafik akan muncul setelah pesanan ditandai selesai.</p></div>
+                <div class="empty-state compact-empty"><h2>Belum ada transaksi selesai</h2><p>Grafik akan muncul setelah pesanan ditandai selesai.</p></div>
             <?php endif ?>
         </div>
     </div>
@@ -106,7 +106,7 @@
         <p class="eyebrow">TERBARU</p>
         <h2>Pesanan terbaru</h2>
     </div>
-    <a class="text-link" href="<?= site_url('admin/pesanan') ?>">Lihat Semua <span aria-hidden="true">↗</span></a>
+    <a class="text-link" href="<?= site_url('admin/pesanan') ?>">Lihat Semua</a>
 </div>
 <div class="admin-table table-responsive">
     <table class="table mb-0">

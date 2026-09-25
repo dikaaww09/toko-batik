@@ -19,7 +19,7 @@
             <img src="<?= base_url('assets/images/mark.svg') ?>" width="32" height="32" alt="">
             Batik Pusaka <span class="admin-label">ADMIN</span>
         </a>
-        <a class="text-link" href="<?= site_url('/') ?>">Lihat toko <span aria-hidden="true">↗</span></a>
+        <a class="text-link" href="<?= site_url('/') ?>">Lihat toko</a>
     </div>
 </header>
 <nav class="admin-nav container" aria-label="Navigasi admin">

@@ -29,5 +29,5 @@
 <li class="nav-item"><a class="nav-link <?= ($active ?? '') === 'login' ? 'active' : '' ?>" href="<?= site_url('login') ?>">Masuk</a></li>
 <?php endif; ?>
 
-<li class="nav-item ms-md-4"><a class="nav-link admin-link" href="<?= site_url('admin') ?>">Admin <span aria-hidden="true">↗</span></a></li>
+<li class="nav-item ms-md-4"><a class="nav-link admin-link" href="<?= site_url('admin') ?>">Admin</a></li>
 </ul></div></nav></header>
